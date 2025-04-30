@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const rutinaController = require('../controllers/routine.controller');
+
+router.post('/', rutinaController.crearRutina);
+router.get('/', rutinaController.obtenerRutinas);
+router.get('/:id', rutinaController.obtenerRutinaPorId);
+router.put('/:id', rutinaController.actualizarRutina);
+router.delete('/:id', rutinaController.eliminarRutina);
+
+module.exports = router;
