@@ -35,7 +35,8 @@ rutas.post("/guardar", clientesController.guardarCliente);
 rutas.put("/editar/:idcliente", clientesController.editarCliente);
 rutas.delete("/eliminar/:idcliente", clientesController.eliminarCliente);
 rutas.post('/asignar-rutina', clientesController.asignarRutinaACliente);
-
+rutas.get('/rutina-asignada/:clienteId', clientesController.obtenerRutinasAsignadas);
+rutas.post('/eliminar-rutina/:clienteId/:rutinaId', clientesController.eliminarRutina);
 rutas.post('/cargarimagen',
 uploadClientes.single('img'),
 clientesController.UploadImage);

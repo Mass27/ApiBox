@@ -49,11 +49,11 @@ const ClientesSchema = new Schema({
         ref: 'Planes',
         required: false
     },
-    rutinaAsignada: {
+    rutinasAsignadas: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Rutinas',  // Referencia al modelo de rutinas
-        required: false,  // Esto puede ser opcional si el cliente no tiene una rutina asignada por defecto
-      },
+        required: false,
+    }],
     // Nuevo campo para almacenar los días restantes del plan
     diasRestantes: {
         type: Number,

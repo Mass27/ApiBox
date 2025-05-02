@@ -290,7 +290,6 @@ exports.eliminarCliente = async (req, res) => {
 exports.asignarRutinaACliente = async (req, res) => {
     const { clienteId, rutinaId } = req.body;
 
-    // Verificar que el clienteId es un ObjectId válido
     if (!mongoose.Types.ObjectId.isValid(clienteId)) {
         return res.status(400).json({ message: 'Cliente ID no válido' });
     }
@@ -308,9 +307,11 @@ exports.asignarRutinaACliente = async (req, res) => {
             return res.status(404).json({ message: 'Rutina no encontrada' });
         }
 
-        // Asignar la rutina al cliente
-        cliente.rutina = rutinaId; // O lo que sea adecuado según tu estructura
-        await cliente.save();
+        // Asignar la rutina al cliente (añadirla al arreglo)
+        if (!cliente.rutinasAsignadas.includes(rutinaId)) {
+            cliente.rutinasAsignadas.push(rutinaId);  // Añadir rutina al arreglo
+            await cliente.save();
+        }
 
         res.status(200).json({ message: 'Rutina asignada correctamente', cliente });
     } catch (error) {
@@ -318,3 +319,48 @@ exports.asignarRutinaACliente = async (req, res) => {
         res.status(500).json({ message: 'Error al asignar rutina', error });
     }
 };
+
+
+exports.obtenerRutinasAsignadas = async (req, res) => {
+    const { clienteId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(clienteId)) {
+        return res.status(400).json({ message: 'Cliente ID no válido' });
+    }
+
+    try {
+        const cliente = await Clientes.findById(clienteId).populate('rutinasAsignadas');
+        if (!cliente) {
+            return res.status(404).json({ message: 'Cliente no encontrado' });
+        }
+
+        res.status(200).json({ rutinasAsignadas: cliente.rutinasAsignadas });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener rutinas asignadas', error });
+    }
+};
+
+exports.eliminarRutina = async (req, res) => {
+    const { clienteId, rutinaId } = req.params;
+  
+    if (!mongoose.Types.ObjectId.isValid(clienteId) || !mongoose.Types.ObjectId.isValid(rutinaId)) {
+      return res.status(400).json({ message: 'Cliente ID o Rutina ID no válido' });
+    }
+  
+    try {
+      const cliente = await Clientes.findById(clienteId);
+      if (!cliente) {
+        return res.status(404).json({ message: 'Cliente no encontrado' });
+      }
+  
+      // Eliminar la rutina de las rutinas asignadas
+      cliente.rutinasAsignadas = cliente.rutinasAsignadas.filter(rutina => rutina.toString() !== rutinaId);
+      await cliente.save();
+  
+      res.status(200).json({ message: 'Rutina eliminada correctamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al eliminar rutina', error });
+    }
+  };
