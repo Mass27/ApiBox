@@ -19,7 +19,7 @@ app.use(express.json());
 connectDB();
 
 // Accede a los modelos individualmente según tus necesidades
-const { Clientes, Empleados, Facturacion, Plan, Producto } = models;
+const { Clientes, Empleados, Facturacion, Plan, Producto, Metrica } = models;
 
 app.use('/api/', require('./rutas/indexRoute'));
 app.use('/api/empleados/', require('./rutas/empleadosRoute'));
@@ -31,6 +31,7 @@ app.use('/api/usuarios', require('./rutas/usuariosRoute'));
 app.use('/api/logins/', require('./rutas/loginsRoute'))
 app.use('/api/autenticacion/', require('./rutas/autenticacionRoute'));
 app.use('/api/rutinas', require('./rutas/routineRoute'));
+app.use('/api/metricas', require('./rutas/metricasRoute'));
 //restarDiasClientes();
 const server = app.listen(process.env.PORT, () =>
     console.log(`Server started http://localhost:${process.env.PORT}`)

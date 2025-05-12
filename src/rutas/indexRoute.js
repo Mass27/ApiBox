@@ -9,6 +9,7 @@ const controladorPlans = require('../controladores/plansController');
 const controladorProductos = require('../controladores/productosController');
 const controladorLogins = require('../controladores/LoginsControllers');
 const controladorRutinas = require('../controladores/routinecontroller');
+ const controladorMetricas = require('../controladores/metricasController');
 const rutas = Router();
 
 rutas.get('/', controladorInicio.Inicio);
@@ -21,5 +22,6 @@ rutas.get('/planes', controladorPlans.Inicio);
 rutas.get('/productos', controladorProductos.Inicio);
 rutas.get('/logins', controladorLogins.Inicio)
 rutas.get('/rutinas', controladorRutinas.Inicio);
+rutas.get('/metricas', controladorMetricas.Inicio);
 
 module.exports= rutas;
