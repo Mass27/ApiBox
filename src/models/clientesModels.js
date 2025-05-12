@@ -51,13 +51,13 @@ const ClientesSchema = new Schema({
     },
     rutinasAsignadas: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Rutinas',  // Referencia al modelo de rutinas
+        ref: 'Rutinas',  
         required: false,
     }],
-    // Nuevo campo para almacenar los días restantes del plan
+  
     diasRestantes: {
         type: Number,
-        default: 30, // Inicializamos en 30 días al momento del registro
+        default: 30, 
     },
 });
 

@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const planescontroller = require("../controladores/plansController"); // Asegúrate de proporcionar la ruta correcta
+const planescontroller = require("../controladores/plansController"); 
 const rutas = Router();
 
 // Rutas para operaciones CRUD en planes

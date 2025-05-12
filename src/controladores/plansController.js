@@ -1,5 +1,5 @@
 const MSJ = require('../componentes/mensaje');
-const Planes = require("../models/planesModels"); // Asegúrate de proporcionar la ruta correcta
+const Planes = require("../models/planesModels"); 
 
 exports.Inicio = (req, res)=>{
     const moduloPlanes={
@@ -45,7 +45,7 @@ exports.listarPlanes = async (req, res) => {
 };
 
 exports.buscarPlanPorId = async (req, res) => {
-    const idPlan = req.params.idplan; // Asegúrate de que el parámetro coincida con el nombre en la ruta
+    const idPlan = req.params.idplan; 
     try {
         const plan = await Planes.findById(idPlan);
         if (!plan) {
@@ -58,9 +58,8 @@ exports.buscarPlanPorId = async (req, res) => {
 };
 exports.buscarPlanPorNombre = async (req, res) => {
     try {
-        const nombrePlan = req.params.nombrePlan; // Obtén el nombre del plan de los parámetros de la URL
-
-        // Utiliza find para buscar planes cuyo nombrePlan contenga la palabra proporcionada
+        const nombrePlan = req.params.nombrePlan; 
+       
         const planes = await Planes.find({ nombrePlan: { $regex: `${nombrePlan}`, $options: 'i' } });
 
         if (!planes || planes.length === 0) {
@@ -84,52 +83,47 @@ exports.guardarPlanes = async (req, res) => {
     }
 };
 exports.editarPlan = async (req, res) => {
-    const { idplan } = req.params; // Obtener el ID del plan de los parámetros de la URL
-    const { nombrePlan, descripcion, precio } = req.body;
+    const { idplan } = req.params;
+    const { nombrePlan, descripcion, precio, dias } = req.body;
 
     try {
-        // Buscar el plan por su ID
         let plan = await Planes.findById(idplan);
 
-        // Verificar si el plan existe
         if (!plan) {
             return res.status(404).json({ message: 'Plan no encontrado' });
         }
 
-        // Actualizar los campos del plan con los nuevos valores
         plan.nombrePlan = nombrePlan;
         plan.descripcion = descripcion;
         plan.precio = precio;
+        plan.dias = dias;
 
-        // Guardar los cambios en el plan
         const planActualizado = await plan.save();
 
-        // Retornar el plan actualizado como respuesta
         res.json(planActualizado);
     } catch (error) {
-        // Si ocurre un error, manejarlo
         res.status(500).json({ message: error.message });
     }
 };
 
 
-// Controlador para eliminar un empleado por su ID
+
 exports.eliminarPlan = async (req, res) => {
-    const { idplan } = req.params; // Obtener el ID del plan de los parámetros de la URL
+    const { idplan } = req.params; 
 
     try {
-        // Buscar el plan por su ID y eliminarlo
+     
         const planEliminado = await Planes.findByIdAndDelete(idplan);
 
-        // Verificar si el plan fue encontrado y eliminado
+        
         if (!planEliminado) {
             return res.status(404).json({ message: 'Plan no encontrado' });
         }
 
-        // Retornar el plan eliminado como respuesta
+       
         res.json(planEliminado);
     } catch (error) {
-        // Si ocurre un error, manejarlo
+      
         res.status(500).json({ message: error.message });
     }
 };

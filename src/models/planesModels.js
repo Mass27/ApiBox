@@ -13,6 +13,11 @@ const planSchema = new mongoose.Schema({
     precio: {
         type: Number,
         required: true
+    },
+    dias: { 
+        type: Number,
+        required: true,
+        min: 1
     }
 });
 
