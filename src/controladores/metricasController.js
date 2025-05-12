@@ -29,15 +29,22 @@ exports.Inicio = (req, res) => {
     MSJ('Petición Métricas ejecutada correctamente', 200, moduloMetricas, [], res);
 };
 
+// exports.listarMetricas = async (req, res) => {
+//     try {
+//        const metricas = await Metricas.find({ esHistorial: false });
+//         res.json(metricas);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 exports.listarMetricas = async (req, res) => {
     try {
-        const metricas = await Metricas.find();
+        const metricas = await Metricas.find({ esHistorial: false });
         res.json(metricas);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
-
 // exports.listarMetricas = async (req, res) => {
 //     try {
 //         const metricas = await Metricas.find().populate('clienteId');
@@ -49,32 +56,16 @@ exports.listarMetricas = async (req, res) => {
 
 
 exports.guardarMetrica = async (req, res) => {
-    const metrica = new Metricas(req.body);
+    const metrica = new Metricas(req.body); 
 
     try {
         const MetricaRutina = await metrica.save();
         res.status(201).json(MetricaRutina);
-        res.json('Metrica Guardada correctamente');
     } catch (error) {
         console.error("❌ Error al guardar:", error);
         res.status(400).json({ message: error.message });
     }
 };
-// exports.guardarMetrica = async (req, res) => {
-//     const datos = req.body;
-//     const metrica = new Metricas(datos);
-
-//     try {
-//         // Guardamos la métrica
-//         const nuevaMetrica = await metrica.save();
-
-//         // Respuesta de éxito, asegurándonos de pasar la métrica bajo 'data'
-//         MSJ('Métrica registrada correctamente', 201, [], nuevaMetrica, res);
-//     } catch (error) {
-//         // Respuesta de error, colocando el mensaje de error en 'errores'
-//         MSJ('Error al guardar la métrica', 400, [error.message], [], res);
-//     }
-// };
 
 exports.metricasPorCliente = async (req, res) => {
     const idCliente = req.params.id;
@@ -88,5 +79,67 @@ exports.metricasPorCliente = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+exports.buscarMetricaPorId = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const metrica = await Metricas.findById(id).populate('clienteId');
+
+        if (!metrica) {
+            return res.status(404).json({
+                msj: 'Métrica no encontrada',
+                data: [],
+                errores: []
+            });
+        }
+
+        res.status(200).json({
+            msj: 'Métrica encontrada correctamente',
+            data: metrica,
+            errores: []
+        });
+    } catch (error) {
+        console.error("❌ Error al buscar métrica:", error);
+        res.status(500).json({
+            msj: 'Error al buscar la métrica',
+            data: [],
+            errores: [error.message]
+        });
+    }
+
+}
+
+exports.editarMetricaPorId = async (req, res) => {
+    const { id } = req.params;
+    const nuevosDatos = req.body;
+
+    try {
+        const metricaActualizada = await Metricas.findByIdAndUpdate(id, nuevosDatos, {
+            new: true,         // Devuelve la métrica actualizada
+            runValidators: true // Aplica validaciones del modelo
+        });
+
+        if (!metricaActualizada) {
+            return res.status(404).json({
+                msj: 'Métrica no encontrada',
+                data: [],
+                errores: []
+            });
+        }
+
+        res.status(200).json({
+            msj: 'Métrica actualizada correctamente',
+            data: metricaActualizada,
+            errores: []
+        });
+    } catch (error) {
+        console.error("❌ Error al editar métrica:", error);
+        res.status(500).json({
+            msj: 'Error al editar la métrica',
+            data: [],
+            errores: [error.message]
+        });
     }
 };

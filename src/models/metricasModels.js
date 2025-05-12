@@ -10,17 +10,18 @@ const MetricaSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  pesoCorporal: Number, // kg
-  grasaCorporal: Number, // %
+  pesoCorporal: Number, 
+  grasaCorporal: Number, 
   imc: Number,
-  rutinaActual: String, // Ej: "Fuerza y resistencia"
-  progreso: String, // Ej: "Ha mejorado en resistencia"
+  rutinaActual: String, 
+  progreso: String, 
   medidas: {
     cintura: Number,
     pecho: Number,
     biceps: Number,
   },
-  nota: String, // nota del entrenador o del cliente
+  nota: String, 
+   esHistorial: { type: Boolean, default: false }
 });
 
 const Metrica = mongoose.model("Metrica", MetricaSchema);
