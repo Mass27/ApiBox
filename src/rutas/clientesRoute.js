@@ -21,7 +21,7 @@ const storageClientes = multer.diskStorage({
 });
 const uploadClientes = multer({storage: storageClientes});
 
-// Rutas para operaciones CRUD en clientes
+
 rutas.get("/", clientesController.Inicio);
 rutas.get("/listar", clientesController.listarClientes);
 rutas.get("/listar/clientesAct", clientesController.listarClientesActivos);

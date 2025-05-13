@@ -1,8 +1,8 @@
-const Empleados = require("../models/empleadosModels"); // Asegúrate de proporcionar la ruta correcta
+const Empleados = require("../models/empleadosModels"); 
 const MSJ = require('../componentes/mensaje');
 const multer = require('multer');
 const { unlinkSync } = require('fs');
-const cloudinary = require('cloudinary').v2; // Importa la instancia de Cloudinary
+const cloudinary = require('cloudinary').v2; 
 
 exports.Inicio = (req, res)=>{
     const moduloEmpleados={
@@ -44,7 +44,7 @@ exports.Inicio = (req, res)=>{
     MSJ('Peticion Empleados ejecutada correctamente',  200, moduloEmpleados, [], res);
 }
 
-// Controlador para listar todos los empleados
+
 exports.listarEmpleados = async (req, res) => {
     try {
         const empleados = await Empleados.find();
@@ -54,12 +54,11 @@ exports.listarEmpleados = async (req, res) => {
     }
 };
 
-// Controlador para obtener un empleado por su ID
 exports.obtenerEmpleadoPorId = async (req, res) => {
     try {
-        const empleadoId = req.params.idempleado; // Asegúrate de tener el ID proporcionado en la URL
+        const empleadoId = req.params.idempleado; 
 
-        // Utiliza findById para buscar un empleado por su ID
+    
         const empleado = await Empleados.findOne({idempleado: empleadoId});
 
         if (!empleado) {
@@ -74,9 +73,9 @@ exports.obtenerEmpleadoPorId = async (req, res) => {
 
 exports.obtenerEmpleadoPorNombre = async (req, res) => {
     try {
-        const nombreCompleto = req.params.nombreCompleto; // Obtén el nombre del empleado de los parámetros de la URL
+        const nombreCompleto = req.params.nombreCompleto; 
 
-        // Utiliza find para buscar empleados cuyo nombre contenga la palabra proporcionada
+   
         const empleados = await Empleados.find({ nombreCompleto: { $regex: `${nombreCompleto}`, $options: 'i' } });
 
         if (!empleados || empleados.length === 0) {
@@ -89,7 +88,7 @@ exports.obtenerEmpleadoPorNombre = async (req, res) => {
     }
 };
 
-// Controlador para guardar un nuevo empleado
+
 exports.guardarEmpleado = async (req, res) => {
     const empleado = new Empleados(req.body);
 
@@ -101,7 +100,7 @@ exports.guardarEmpleado = async (req, res) => {
     }
 };
 
-// Controlador para editar un empleado por su ID
+
 exports.editarEmpleado = async (req, res) => {
     try {
         const empleadoId = req.params.idempleado;
@@ -112,7 +111,7 @@ exports.editarEmpleado = async (req, res) => {
     }
 };
 
-// Controlador para eliminar un empleado por su ID
+
 exports.eliminarEmpleado = async (req, res) => {
     try {
         const empleadoId = req.params.idempleado;

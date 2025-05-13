@@ -4,7 +4,7 @@ const Usuario = require('../models/usuariosModels');
 const Logins = require('../models/loginsModels');
 const MSJ = require('../componentes/mensaje');
 const passport = require('../configuraciones/passport');
-// Validación de errores
+
 
 
 exports.inicioSesion = async (req, res) => {
@@ -24,14 +24,14 @@ exports.inicioSesion = async (req, res) => {
             return MSJ("Usuario no encontrado", 404, [], [{ mensaje: "El usuario no existe o se encuentra bloqueado", parametro: "nombreUsuario" }], res);
         }
 
-        // Obtener el tipo de usuario asociado desde el modelo de Logins
+     
         const login = await Logins.findById(usuario.tipoUsuario);
 
-        // Verificar la contraseña
+     
         const contrasenaValida = await bcrypt.compare(contrasenalogin, usuario.contrasenalogin);
 
         if (contrasenaValida) {
-            // Generar token de autenticación
+         
             const token = passport.getToken({ idUsuario: usuario._id });
 
             const data = {
@@ -41,7 +41,7 @@ exports.inicioSesion = async (req, res) => {
                     correo: usuario.correo,
                     tipoUsuario: login.usuarioLogin,
                     Permisos: login.descripcion
-                    // Otros datos del usuario si es necesario
+                   
                 }
             };
 

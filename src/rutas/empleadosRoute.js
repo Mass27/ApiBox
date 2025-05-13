@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { body, query } = require('express-validator');
-const empleadosController = require("../controladores/empleadosController"); // Asegúrate de proporcionar la ruta correcta
+const empleadosController = require("../controladores/empleadosController"); 
 const rutas = Router();
 const multer = require('multer');
 const path = require('path');
@@ -11,15 +11,15 @@ const storageEmpleados = multer.diskStorage({
         cb(null, path.join(__dirname, '../public/img/empleados'));
     },
     filename: function(req, file, cb){
-        // fecha actual + funcion matematica que multiplica un numero aleatorio * 1E9
+        
         const nombreUnico = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, "HOLA" + '-' + nombreUnico + '-' + file.mimetype.replace('/','.'));
-        //HOLA-1689111650726-393957070-neymarJr.jpeg
+     
     } 
 });
 const uploadEmpleados = multer({storage: storageEmpleados});
 
-// Rutas para operaciones CRUD en empleados
+
 rutas.get("/", empleadosController.Inicio);
 rutas.get("/listar", empleadosController.listarEmpleados);
 rutas.get("/buscar/:idempleado", empleadosController.obtenerEmpleadoPorId);

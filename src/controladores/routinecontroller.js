@@ -1,10 +1,10 @@
-const Rutinas = require("../models/routinemodel"); // Asegúrate de proporcionar la ruta correcta
+const Rutinas = require("../models/routinemodel"); 
 const MSJ = require('../componentes/mensaje');
 const multer = require('multer');
 const { unlinkSync } = require('fs');
-const cloudinary = require('cloudinary').v2; // Importa la instancia de Cloudinary
+const cloudinary = require('cloudinary').v2; 
 
-// Controlador para la sección de Rutinas
+
 exports.Inicio = (req, res) => {
     const moduloRutinas = {
         modulo: 'rutinas',
@@ -39,7 +39,7 @@ exports.Inicio = (req, res) => {
     MSJ('Peticion Rutinas ejecutada correctamente', 200, moduloRutinas, [], res);
 }
 
-// Controlador para listar todas las rutinas
+
 exports.listarRutinas = async (req, res) => {
     try {
         const rutinas = await Rutinas.find();
@@ -49,12 +49,12 @@ exports.listarRutinas = async (req, res) => {
     }
 };
 
-// Controlador para obtener una rutina por su ID
+
 exports.obtenerRutinaPorId = async (req, res) => {
     try {
         const rutinaId = req.params.idrutina;
 
-        const rutina = await Rutinas.findById(rutinaId); // <- usa findById si el ID es el _id de Mongo
+        const rutina = await Rutinas.findById(rutinaId); 
 
         if (!rutina) {
             return res.status(404).json({ message: "Rutina no encontrada" });
@@ -66,7 +66,7 @@ exports.obtenerRutinaPorId = async (req, res) => {
     }
 };
 
-// Controlador para guardar una nueva rutina
+
 exports.guardarRutina = async (req, res) => {
     const rutina = new Rutinas(req.body);
 
@@ -79,7 +79,7 @@ exports.guardarRutina = async (req, res) => {
     }
 };
 
-// Controlador para editar una rutina por su ID
+
 exports.editarRutina = async (req, res) => {
     try {
         const rutinaId = req.params.idrutina;
@@ -90,7 +90,7 @@ exports.editarRutina = async (req, res) => {
     }
 };
 
-// Controlador para eliminar una rutina por su ID
+
 exports.eliminarRutina = async (req, res) => {
     try {
         const rutinaId = req.params.idrutina;

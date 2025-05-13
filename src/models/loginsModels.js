@@ -5,7 +5,7 @@ const LoginsSchema = mongoose.Schema(
         usuarioLogin: {
             type: String,
             required: false,
-            unique: true, // Usuario único
+            unique: true, 
         },
         descripcion: {
             type: String,
@@ -19,19 +19,19 @@ const LoginsSchema = mongoose.Schema(
         permisos: {
             editar: {
                 type: Boolean,
-                default: false, // Valor predeterminado: false
+                default: false, 
             },
             eliminar: {
                 type: Boolean,
-                default: false, // Valor predeterminado: false
+                default: false, 
             },
             crear: {
                 type: Boolean,
-                default: false, // Valor predeterminado: false
+                default: false, 
             },
             listar: {
                 type: Boolean,
-                default: false, // Valor predeterminado: false
+                default: false, 
             }
         }
     },

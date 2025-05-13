@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const Clientes = require('../models/clientesModels');
 
-// Función para restar un día a los clientes activos
+
 const restarUnDiaAClientesActivos = async () => {
     try {
         const clientesActivos = await Clientes.find({ estado: 'Activo' });
@@ -17,7 +17,7 @@ const restarUnDiaAClientesActivos = async () => {
     }
 };
 
-// Programar la tarea para que se ejecute todos los días a medianoche
+
 cron.schedule('0 0 * * *', async () => {
     console.log('Ejecutando tarea diaria para restar días a clientes activos...');
     await restarUnDiaAClientesActivos();

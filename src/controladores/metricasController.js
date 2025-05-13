@@ -29,14 +29,7 @@ exports.Inicio = (req, res) => {
     MSJ('Petición Métricas ejecutada correctamente', 200, moduloMetricas, [], res);
 };
 
-// exports.listarMetricas = async (req, res) => {
-//     try {
-//        const metricas = await Metricas.find({ esHistorial: false });
-//         res.json(metricas);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+
 exports.listarMetricas = async (req, res) => {
     try {
         const metricas = await Metricas.find({ esHistorial: false });
@@ -45,14 +38,6 @@ exports.listarMetricas = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-// exports.listarMetricas = async (req, res) => {
-//     try {
-//         const metricas = await Metricas.find().populate('clienteId');
-//         MSJ('Lista de métricas obtenida correctamente', 200, [], metricas, res);
-//     } catch (error) {
-//         MSJ('Error al obtener métricas', 500, error.message, [], res);
-//     }
-// };
 
 
 exports.guardarMetrica = async (req, res) => {
@@ -117,8 +102,8 @@ exports.editarMetricaPorId = async (req, res) => {
 
     try {
         const metricaActualizada = await Metricas.findByIdAndUpdate(id, nuevosDatos, {
-            new: true,         // Devuelve la métrica actualizada
-            runValidators: true // Aplica validaciones del modelo
+            new: true,        
+            runValidators: true 
         });
 
         if (!metricaActualizada) {

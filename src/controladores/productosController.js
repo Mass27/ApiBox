@@ -1,4 +1,4 @@
-const Productos = require("../models/productosModels"); // Asegúrate de proporcionar la ruta correcta
+const Productos = require("../models/productosModels"); 
 const MSJ = require('../componentes/mensaje');
 const multer = require('multer');
 const { unlinkSync } = require('fs');
@@ -39,7 +39,7 @@ exports.Inicio = (req, res)=>{
     MSJ('Peticion productos ejecutada correctamente',  200, moduloProductos, [], res);
 }
 
-// Controlador para listar todos los producto
+
 exports.listarProductos = async (req, res) => {
     try {
         const productos = await Productos.find();
@@ -51,9 +51,9 @@ exports.listarProductos = async (req, res) => {
 
 exports.obteneProductoPorId = async (req, res) => {
     try {
-        const productoID = req.params.idproducto; // Asegúrate de tener el ID proporcionado en la URL
+        const productoID = req.params.idproducto; 
 
-        // Utiliza findById para buscar un producto por su ID
+     
         const producto = await Productos.findOne({idproducto: productoID});
 
         if (!producto) {
@@ -67,12 +67,12 @@ exports.obteneProductoPorId = async (req, res) => {
 };
 
 
-// Controlador para obtener un producto por su ID
+
 exports.listarProductosPorNombre = async (req, res) => {
     try {
-        const nombreProducto = req.params.nombreProducto; // Obtén el nombre del producto de los parámetros de la URL
+        const nombreProducto = req.params.nombreProducto; 
 
-        // Utiliza find para buscar productos cuyo nombre contenga la palabra proporcionada
+     
         const productos = await Productos.find({ nombreProducto: { $regex: `${nombreProducto}`, $options: 'i' } });
 
         if (!productos || productos.length === 0) {
@@ -85,7 +85,7 @@ exports.listarProductosPorNombre = async (req, res) => {
     }
 };
 
-// Controlador para guardar un nuevo producto
+
 exports.guardarProducto = async (req, res) => {
     const producto = new Productos(req.body);
 
@@ -97,7 +97,7 @@ exports.guardarProducto = async (req, res) => {
     }
 };
 
-// Controlador para editar un producto por su ID
+
 exports.editarProducto = async (req, res) => {
     try {
         const productoId = req.params.idproducto;
@@ -108,7 +108,6 @@ exports.editarProducto = async (req, res) => {
     }
 };
 
-// Controlador para eliminar un producto por su ID
 exports.eliminarProducto = async (req, res) => {
     try {
         const productoId = req.params.idproducto;
@@ -128,18 +127,18 @@ exports.UploadImage = async (req, res) => {
 
         const { idproducto } = req.body;
 
-        // Sube la imagen a Cloudinary
+   
         const cloudImageData = await cloudinary.uploader.upload(req.file.path, {
             transformation: [{ width: 500, height: 500, crop: 'limit' }]
         });
 
-        // Construye la URL de la imagen en Cloudinary
+       
         const cloudinaryUrl = `https://res.cloudinary.com/dp8uoz27t/image/upload/v1689345253/${cloudImageData.public_id}.png`;
 
-        // Elimina el archivo temporal
+      
         unlinkSync(req.file.path);
 
-        // Actualiza el documento del producto en la base de datos MongoDB con la URL de la imagen
+   
         await Productos.updateOne({ idproducto: idproducto }, { imagen: cloudinaryUrl });    
 
         res.json({ cloudinaryUrl });    

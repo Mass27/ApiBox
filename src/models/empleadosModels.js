@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
-// AutoIncrement.initialize(mongoose.connection, { overwrite: true });
+
 
 const EmpleadoSchema = mongoose.Schema(
     {
-        // No es necesario definir "auto" aquí, ya que el plugin lo manejará
+       
         idempleado: {
             type: Number,
             auto: true,
@@ -36,7 +36,7 @@ const EmpleadoSchema = mongoose.Schema(
             unique: true,
             validate: {
                 validator: function(v) {
-                    return /^\d{8}$/.test(v); // Expresión regular para validar 8 caracteres numéricos
+                    return /^\d{8}$/.test(v); 
                 },
                 message: props => `${props.value} no es un número de teléfono válido. Debe tener exactamente 8 caracteres.`
             }

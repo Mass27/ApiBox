@@ -2,7 +2,7 @@ const { Router } = require('express');
 const planescontroller = require("../controladores/plansController"); 
 const rutas = Router();
 
-// Rutas para operaciones CRUD en planes
+
 rutas.get("/", planescontroller.Inicio);
 rutas.get("/listar", planescontroller.listarPlanes);
 rutas.get("/buscar/:idplan", planescontroller.buscarPlanPorId);

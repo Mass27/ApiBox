@@ -129,7 +129,7 @@ exports.buscarClientePorId = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-// Controlador para obtener un cliente por su ID
+
 exports.listarClientesPorNombre = async (req, res) => {
     try {
         const nombreCliente = req.params.nombreCliente; 

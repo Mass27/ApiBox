@@ -1,4 +1,4 @@
-// models/index.js
+
 const Clientes = require('./clientesModels');
 const Empleados = require('./empleadosModels');
 const Facturacion = require('./facturacionModels');
@@ -6,7 +6,7 @@ const Logins = require('./loginsModels');
 const Plan = require('./planesModels');
 const Producto = require('./productosModels');
 const Usuarios = require('./usuariosModels');
-const Rutinas = require('./routinemodel');  // Importar el modelo de Rutinas
+const Rutinas = require('./routinemodel'); 
 
 
 exports.crearModelos = async () => {
@@ -32,7 +32,7 @@ exports.crearModelos = async () => {
     await Logins.sync().then(()=>{
         console.log('Modelo Logins Creado correctamente');
     })
-    await Rutinas.sync().then(()=>{  // Agregar la creación del modelo Rutinas
+    await Rutinas.sync().then(()=>{  
         console.log('Modelo Rutinas Creado correctamente');
     })
 };

@@ -9,16 +9,16 @@ require('dotenv').config();
 const restarDiasClientes = require('./cron/restarDiasClientes');
 
 
-//inicio del servidor
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 
-// Conectar a la base de datos
+
 connectDB();
 
-// Accede a los modelos individualmente según tus necesidades
+
 const { Clientes, Empleados, Facturacion, Plan, Producto, Metrica } = models;
 
 app.use('/api/', require('./rutas/indexRoute'));

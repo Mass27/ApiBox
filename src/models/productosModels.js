@@ -5,7 +5,7 @@ const ProductosSchema = mongoose.Schema(
     {
         idproducto: {
             type: Number,
-            auto: true, // Activa la autoincrementación
+            auto: true, 
         },
         imagen: {
             type: String,
