@@ -21,8 +21,15 @@ const MetricaSchema = new mongoose.Schema({
     biceps: Number,
   },
   nota: String, 
-   esHistorial: { type: Boolean, default: false }
+   esHistorial: { type: Boolean, default: false },
+   
+
 });
+
+MetricaSchema.index(
+  { clienteId: 1, esHistorial: 1 },
+  { unique: true, partialFilterExpression: { esHistorial: false } }
+);
 
 const Metrica = mongoose.model("Metrica", MetricaSchema);
 

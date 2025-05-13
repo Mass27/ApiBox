@@ -51,7 +51,7 @@ exports.Inicio = (req, res)=>{
     MSJ('Peticion Clientes ejecutada correctamente',  200, moduloClientes, [], res);
 }
 
-// Controlador para listar todos los clientes
+
 exports.listarClientes = async (req, res) => {
     try {
         const clientes = await Clientes.find();
@@ -60,6 +60,31 @@ exports.listarClientes = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.listarClientesPage = async (req, res) => {
+    try {
+        // Parámetros de paginación desde la URL: ?page=1&limit=10
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const total = await Clientes.countDocuments();
+        const clientes = await Clientes.find()
+            .skip(skip)
+            .limit(limit)
+            .sort({ nombreCompleto: 1 }); // opcional: ordenar por nombre
+
+        res.json({
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+            clientes
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.listarClientesActivos = async (req, res) => {
     try {
   
@@ -180,9 +205,9 @@ exports.guardarCliente = async (req, res) => {
 
         const clienteGuardado = await nuevoCliente.save();
 
-        if (estado === 'Activo') {
-            await restarUnDiaAClientesActivos();
-        }
+        // if (estado === 'Activo') {
+        //     await restarUnDiaAClientesActivos();
+        // }
 
         res.status(201).json(clienteGuardado);
     } catch (error) {
@@ -191,28 +216,28 @@ exports.guardarCliente = async (req, res) => {
 };
 
 
-const restarUnDiaAClientesActivos = async () => {
-    try {
+// const restarUnDiaAClientesActivos = async () => {
+//     try {
        
-        const clientesActivos = await Clientes.find({ estado: 'Activo' });
+//         const clientesActivos = await Clientes.find({ estado: 'Activo' });
 
       
-        for (const cliente of clientesActivos) {
+//         for (const cliente of clientesActivos) {
         
-            cliente.diasRestantes = Math.max(cliente.diasRestantes - 1, 0);
+//             cliente.diasRestantes = Math.max(cliente.diasRestantes - 1, 0);
 
         
-            if (cliente.diasRestantes === 0) {
-                cliente.estado = 'Inactivo';
-            }
+//             if (cliente.diasRestantes === 0) {
+//                 cliente.estado = 'Inactivo';
+//             }
 
        
-            await cliente.save();
-        }
-    } catch (error) {
-        throw new Error(`Error al restar un día a los clientes activos: ${error.message}`);
-    }
-};
+//             await cliente.save();
+//         }
+//     } catch (error) {
+//         throw new Error(`Error al restar un día a los clientes activos: ${error.message}`);
+//     }
+// };
 
 exports.editarCliente = async (req, res) => {
     const { idcliente } = req.params; 
@@ -240,7 +265,7 @@ exports.editarCliente = async (req, res) => {
             cliente.nombrePlan = nuevoPlan.nombre;  
 
          
-            await restarUnDiaAClientesActivos(); 
+            // await restarUnDiaAClientesActivos(); 
         }
 
    

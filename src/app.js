@@ -32,7 +32,7 @@ app.use('/api/logins/', require('./rutas/loginsRoute'))
 app.use('/api/autenticacion/', require('./rutas/autenticacionRoute'));
 app.use('/api/rutinas', require('./rutas/routineRoute'));
 app.use('/api/metricas', require('./rutas/metricasRoute'));
-//restarDiasClientes();
+restarDiasClientes();
 const server = app.listen(process.env.PORT, () =>
     console.log(`Server started http://localhost:${process.env.PORT}`)
 );

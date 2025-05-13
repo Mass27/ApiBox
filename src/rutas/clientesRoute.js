@@ -24,6 +24,7 @@ const uploadClientes = multer({storage: storageClientes});
 
 rutas.get("/", clientesController.Inicio);
 rutas.get("/listar", clientesController.listarClientes);
+rutas.get("/listarPage", clientesController.listarClientesPage);
 rutas.get("/listar/clientesAct", clientesController.listarClientesActivos);
 rutas.get("/contar/clientesAct", clientesController.contarClientesActivos);
 rutas.get("/listar/clientesIna", clientesController.listarClientesInactivos);
