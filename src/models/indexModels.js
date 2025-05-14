@@ -7,6 +7,7 @@ const Plan = require('./planesModels');
 const Producto = require('./productosModels');
 const Usuarios = require('./usuariosModels');
 const Rutinas = require('./routinemodel'); 
+const Metricas = require('./metricasModels');
 
 
 exports.crearModelos = async () => {
@@ -34,6 +35,9 @@ exports.crearModelos = async () => {
     })
     await Rutinas.sync().then(()=>{  
         console.log('Modelo Rutinas Creado correctamente');
+    })
+     await Metricas.sync().then(()=>{  
+        console.log('Modelo Metricas Creado correctamente');
     })
 };
 

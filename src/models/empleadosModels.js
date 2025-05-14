@@ -47,6 +47,12 @@ const EmpleadoSchema = mongoose.Schema(
             unique: true,
             match: [/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/, 'Por favor, introduce una dirección de correo electrónico válida']
         },
+           tipoEmpleado: {
+            type: String,
+    required: true,
+    trim: true
+        },
+    
     },
     {
         timestamps: true,

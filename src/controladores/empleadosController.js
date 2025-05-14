@@ -91,7 +91,9 @@ exports.obtenerEmpleadoPorNombre = async (req, res) => {
 
 exports.guardarEmpleado = async (req, res) => {
     const empleado = new Empleados(req.body);
-
+if (!req.body.tipoEmpleado || req.body.tipoEmpleado.trim() === "") {
+    return res.status(400).json({ message: "El tipo de empleado es obligatorio." });
+}
     try {
         const nuevoEmpleado = await empleado.save();
         res.status(201).json(nuevoEmpleado);
