@@ -1,5 +1,6 @@
 const Facturaciones = require("../models/facturacionModels"); 
 const MSJ = require('../componentes/mensaje');
+const Productos = require("../models/productosModels");
 
 exports.Inicio = (req, res)=>{
     const moduloFacturaciones={
@@ -78,6 +79,55 @@ exports.obtenerFacturaPorNombreCliente = async (req, res) => {
     }
 };
 
+// exports.guardarFacturacion = async (req, res) => {
+//     const {
+//         idcliente,
+//         nombreCliente,
+//         fecha,
+//         metodoPago,
+//         idPlan,
+//         nombrePlan,
+//         precioPlan,
+//         idproducto,
+//         nombreProducto,
+//         precioProducto,
+//         CantidadProducto,
+//         subtotal,
+//         descuento,
+//         totalPagar
+//     } = req.body;
+
+//     try {
+       
+//         const nuevaFactura = new Facturaciones({
+//             idcliente,
+//             nombreCliente,
+//             fecha,
+//             metodoPago,
+//             idPlan,
+//             nombrePlan,
+//             precioPlan,
+//             idproducto,
+//             nombreProducto,
+//             precioProducto,
+//             CantidadProducto,
+//             subtotal,
+//             descuento,
+//             totalPagar
+//         });
+
+//         const facturaGuardada = await nuevaFactura.save();
+
+     
+//         res.status(201).json(facturaGuardada);
+//     } catch (error) {
+      
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
+
+
 exports.guardarFacturacion = async (req, res) => {
     const {
         idcliente,
@@ -97,7 +147,17 @@ exports.guardarFacturacion = async (req, res) => {
     } = req.body;
 
     try {
-       
+        // Validar producto por ObjectId
+        const producto = await Productos.findById(idproducto);
+        if (!producto) {
+            return res.status(404).json({ message: "Producto no encontrado" });
+        }
+
+        if (producto.cantidadEnStock < CantidadProducto) {
+            return res.status(400).json({ message: "Stock insuficiente" });
+        }
+
+        // Crear factura
         const nuevaFactura = new Facturaciones({
             idcliente,
             nombreCliente,
@@ -115,19 +175,24 @@ exports.guardarFacturacion = async (req, res) => {
             totalPagar
         });
 
-        const facturaGuardada = await nuevaFactura.save();
+        await nuevaFactura.save();
 
-     
-        res.status(201).json(facturaGuardada);
+        // Actualizar stock
+        producto.cantidadEnStock -= CantidadProducto;
+        await producto.save();
+
+        res.status(201).json(nuevaFactura);
+
     } catch (error) {
-      
         res.status(500).json({ message: error.message });
     }
 };
 
+
 exports.editarFacturacion = async (req, res) => {
     try {
         const facturaId = req.params.idfacturacion; 
+        
         const {
             idcliente,
             nombreCliente,
