@@ -127,66 +127,68 @@ exports.obtenerFacturaPorNombreCliente = async (req, res) => {
 // };
 
 
-
 exports.guardarFacturacion = async (req, res) => {
-    const {
-        idcliente,
-        nombreCliente,
-        fecha,
-        metodoPago,
-        idPlan,
-        nombrePlan,
-        precioPlan,
-        idproducto,
-        nombreProducto,
-        precioProducto,
-        CantidadProducto,
-        subtotal,
-        descuento,
-        totalPagar
-    } = req.body;
+  const {
+    idcliente,
+    nombreCliente,
+    fecha,
+    metodoPago,
+    idPlan,
+    nombrePlan,
+    precioPlan,
+    idproducto,
+    nombreProducto,
+    precioProducto,
+    CantidadProducto,
+    subtotal,
+    descuento,
+    totalPagar
+  } = req.body;
 
-    try {
-        // Validar producto por ObjectId
-        const producto = await Productos.findById(idproducto);
-        if (!producto) {
-            return res.status(404).json({ message: "Producto no encontrado" });
-        }
-
-        if (producto.cantidadEnStock < CantidadProducto) {
-            return res.status(400).json({ message: "Stock insuficiente" });
-        }
-
-        // Crear factura
-        const nuevaFactura = new Facturaciones({
-            idcliente,
-            nombreCliente,
-            fecha,
-            metodoPago,
-            idPlan,
-            nombrePlan,
-            precioPlan,
-            idproducto,
-            nombreProducto,
-            precioProducto,
-            CantidadProducto,
-            subtotal,
-            descuento,
-            totalPagar
-        });
-
-        await nuevaFactura.save();
-
-        // Actualizar stock
-        producto.cantidadEnStock -= CantidadProducto;
-        await producto.save();
-
-        res.status(201).json(nuevaFactura);
-
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  try {
+    if (idproducto) {
+      const producto = await Productos.findById(idproducto);
+      if (!producto) {
+        return res.status(404).json({ message: "Producto no encontrado" });
+      }
+      if (producto.cantidadEnStock < CantidadProducto) {
+        return res.status(400).json({ message: "Stock insuficiente" });
+      }
+      // Actualizar stock después de guardar la factura
     }
+
+    const nuevaFactura = new Facturaciones({
+      idcliente,
+      nombreCliente,
+      fecha,
+      metodoPago,
+      idPlan,
+      nombrePlan,
+      precioPlan,
+      idproducto,
+      nombreProducto,
+      precioProducto,
+      CantidadProducto,
+      subtotal,
+      descuento,
+      totalPagar
+    });
+
+    await nuevaFactura.save();
+
+    if (idproducto) {
+      const producto = await Productos.findById(idproducto);
+      producto.cantidadEnStock -= CantidadProducto;
+      await producto.save();
+    }
+
+    res.status(201).json(nuevaFactura);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 
 exports.editarFacturacion = async (req, res) => {

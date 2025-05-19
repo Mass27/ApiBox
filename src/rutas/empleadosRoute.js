@@ -31,5 +31,6 @@ rutas.put("/editar/:idempleado",
 body('numeroTelefono').isLength({ min:8, max: 8}).withMessage('El campo telefono debe tener 8 caracteres'),
 empleadosController.editarEmpleado);
 rutas.delete("/eliminar/:idempleado", empleadosController.eliminarEmpleado);
+rutas.get('/entrenadores', empleadosController.listarEntrenadores);
 
 module.exports = rutas;

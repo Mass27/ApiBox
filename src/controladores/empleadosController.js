@@ -123,3 +123,12 @@ exports.eliminarEmpleado = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+exports.listarEntrenadores = async (req, res) => {
+    try {
+        const entrenadores = await Empleados.find({ tipoEmpleado: 'entrenador' });
+        res.json(entrenadores);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

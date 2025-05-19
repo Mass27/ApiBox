@@ -54,7 +54,7 @@ exports.obteneProductoPorId = async (req, res) => {
         const productoID = req.params.idproducto; 
 
      
-        const producto = await Productos.findOne({idproducto: productoID});
+        const producto = await Productos.findOne({_id: productoID});
 
         if (!producto) {
             return res.status(404).json({ message: "Producto no encontrado" });
@@ -101,7 +101,7 @@ exports.guardarProducto = async (req, res) => {
 exports.editarProducto = async (req, res) => {
     try {
         const productoId = req.params.idproducto;
-        const producto = await Productos.findOneAndUpdate({idproducto: productoId}, req.body, { new: true });
+        const producto = await Productos.findOneAndUpdate({_id: productoId}, req.body, { new: true });
         res.json(producto);
     } catch (error) {
         res.status(400).json({ message: error.message });
