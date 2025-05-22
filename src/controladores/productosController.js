@@ -139,7 +139,7 @@ exports.UploadImage = async (req, res) => {
         unlinkSync(req.file.path);
 
    
-        await Productos.updateOne({ idproducto: idproducto }, { imagen: cloudinaryUrl });    
+        await Productos.updateOne({ _id: idproducto }, { imagen: cloudinaryUrl });    
 
         res.json({ cloudinaryUrl });    
     } catch (error) {
