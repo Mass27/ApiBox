@@ -1,6 +1,12 @@
 const Facturaciones = require("../models/facturacionModels"); 
 const MSJ = require('../componentes/mensaje');
 const Productos = require("../models/productosModels");
+const Planes = require('../models/planesModels');
+const nodemailer = require('nodemailer');
+const Handlebars = require('handlebars');
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
 
 exports.Inicio = (req, res)=>{
     const moduloFacturaciones={
@@ -78,53 +84,6 @@ exports.obtenerFacturaPorNombreCliente = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-// exports.guardarFacturacion = async (req, res) => {
-//     const {
-//         idcliente,
-//         nombreCliente,
-//         fecha,
-//         metodoPago,
-//         idPlan,
-//         nombrePlan,
-//         precioPlan,
-//         idproducto,
-//         nombreProducto,
-//         precioProducto,
-//         CantidadProducto,
-//         subtotal,
-//         descuento,
-//         totalPagar
-//     } = req.body;
-
-//     try {
-       
-//         const nuevaFactura = new Facturaciones({
-//             idcliente,
-//             nombreCliente,
-//             fecha,
-//             metodoPago,
-//             idPlan,
-//             nombrePlan,
-//             precioPlan,
-//             idproducto,
-//             nombreProducto,
-//             precioProducto,
-//             CantidadProducto,
-//             subtotal,
-//             descuento,
-//             totalPagar
-//         });
-
-//         const facturaGuardada = await nuevaFactura.save();
-
-     
-//         res.status(201).json(facturaGuardada);
-//     } catch (error) {
-      
-//         res.status(500).json({ message: error.message });
-//     }
-// };
 
 
 exports.guardarFacturacion = async (req, res) => {
@@ -256,3 +215,106 @@ exports.eliminarFacturacion = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+const enviarCorreoFactura = async (emailDestino, factura,datosExtras) => {
+  try {
+    // Aquí debes pasar los datos extras para el PDF, por ejemplo:
+ const pdfPath = await generarPDFConDiseno(factura, datosExtras);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'Manuelserbellon@gmail.com',
+        pass: 'esosztvdavmyfqcq'
+      }
+    });
+
+    const mailOptions = {
+      from: 'Manuelserbellon@gmail.com',
+      to: emailDestino,
+      subject: `Factura ID ${factura._id}`,
+      text: `Hola ${factura.nombreCliente},\n\nAdjunto encontrarás tu factura en formato PDF.`,
+      attachments: [
+        {
+          filename: `Factura-${factura._id}.pdf`,
+          path: pdfPath
+        }
+      ]
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Eliminar el archivo PDF después de enviar el correo
+    fs.unlink(pdfPath, () => {});
+
+    return true;
+
+  } catch (error) {
+    console.error('Error enviando correo con PDF:', error);
+    return false;
+  }
+};
+
+
+
+exports.enviarFacturaPorCorreo = async (req, res) => {
+  try {
+    const factura = await Facturaciones.findById(req.params.idfacturacion);
+    if (!factura) return res.status(404).json({ message: "Factura no encontrada" });
+
+    const { emailDestino } = req.body;
+    if (!emailDestino) return res.status(400).json({ message: "Debes proporcionar un correo de destino" });
+
+    // Buscar nombre del plan y producto
+    const plan = await Planes.findById(factura.idPlan);
+    console.log("Plan encontrado:", plan);
+    const producto = await Productos.findById(factura.idproducto);
+console.log("Producto encontrado:", producto);
+    const datosExtras = {
+      nombrePlan: plan?.nombrePlan  || 'Sin plan',
+      nombreProducto: producto?.nombreProducto  || 'Sin producto'
+    };
+
+    // Responder inmediatamente
+    res.json({ message: "Factura en proceso de envío" });
+
+    // Enviar en segundo plano
+    setImmediate(async () => {
+      const enviado = await enviarCorreoFactura(emailDestino, factura, datosExtras);
+      if (!enviado) console.error("Fallo el envío de la factura");
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+async function generarPDFConDiseno(factura, datosExtras) {
+  const templateHtml = fs.readFileSync(path.join(__dirname, '../templates/factura.html'), 'utf8');
+  const template = Handlebars.compile(templateHtml);
+
+  const facturaPlain = factura.toObject();
+
+  const context = {
+    ...facturaPlain,
+    totalProducto: (facturaPlain.CantidadProducto || 1) * (facturaPlain.precioProducto || 0),
+    nombrePlan: datosExtras.nombrePlan,
+    nombreProducto: datosExtras.nombreProducto,
+    fecha: new Date(facturaPlain.fecha).toLocaleDateString('es-HN')
+  };
+
+  console.log("Datos que recibe el template:", context);
+
+  const html = template(context);
+
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(html);
+  const pdfPath = path.join(__dirname, `factura_${factura._id}.pdf`);
+  await page.pdf({ path: pdfPath, format: 'A4' });
+  await browser.close();
+  return pdfPath;
+}

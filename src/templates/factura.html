@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: auto;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #ff1100;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0;
+      color: #ff1100;
+    }
+    .info, .detalle {
+      margin-bottom: 30px;
+    }
+    .info p {
+      margin: 5px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th {
+      background-color: #ff1100;
+      color: white;
+      padding: 10px;
+      text-align: left;
+    }
+    td {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    .total {
+      text-align: right;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .total p {
+      margin: 5px 0;
+    }
+    .total strong {
+      font-size: 20px;
+      color: #ff1100;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Boxing Club</h1>
+      <p>Barrio Subirana, El Progreso, Yoro</p>
+      <p>Tel: +504 1234-5678</p>
+    </div>
+
+    <div class="info">
+      <p><strong>Cliente:</strong> {{nombreCliente}}</p>
+      <p><strong>Fecha:</strong> {{fecha}}</p>
+      <p><strong>Método de Pago:</strong> {{metodoPago}}</p>
+      <p><strong>Factura N°:</strong> {{numeroFactura}}</p>
+    </div>
+
+    <div class="detalle">
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#if idPlan}}
+          <tr>
+            <td>{{nombrePlan}}</td>
+            <td>1</td>
+            <td>L {{precioPlan}}</td>
+            <td>L {{precioPlan}}</td>
+          </tr>
+          {{/if}}
+          {{#if idproducto}}
+          <tr>
+            <td>{{nombreProducto}}</td>
+            <td>{{CantidadProducto}}</td>
+            <td>L {{precioProducto}}</td>
+            <td>L {{totalProducto}}</td>
+          </tr>
+          {{/if}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="total">
+      <p>Subtotal: L {{subtotal}}</p>
+      <p>Descuento: {{descuento}}%</p>
+      <p><strong>Total a Pagar: L {{totalPagar}}</strong></p>
+    </div>
+  </div>
+</body>
+</html>
