@@ -85,7 +85,6 @@ exports.obtenerFacturaPorNombreCliente = async (req, res) => {
     }
 };
 
-
 exports.guardarFacturacion = async (req, res) => {
   const {
     idcliente,
@@ -113,9 +112,19 @@ exports.guardarFacturacion = async (req, res) => {
       if (producto.cantidadEnStock < CantidadProducto) {
         return res.status(400).json({ message: "Stock insuficiente" });
       }
-      // Actualizar stock después de guardar la factura
+
+     
+      producto.cantidadEnStock -= CantidadProducto;
+
+  
+      if (producto.cantidadEnStock === 0) {
+        producto.estado = 'Inactivo';  
+      }
+
+      await producto.save();  
     }
 
+   
     const nuevaFactura = new Facturaciones({
       idcliente,
       nombreCliente,
@@ -133,13 +142,8 @@ exports.guardarFacturacion = async (req, res) => {
       totalPagar
     });
 
+  
     await nuevaFactura.save();
-
-    if (idproducto) {
-      const producto = await Productos.findById(idproducto);
-      producto.cantidadEnStock -= CantidadProducto;
-      await producto.save();
-    }
 
     res.status(201).json(nuevaFactura);
 
@@ -152,58 +156,84 @@ exports.guardarFacturacion = async (req, res) => {
 
 exports.editarFacturacion = async (req, res) => {
     try {
-        const facturaId = req.params.idfacturacion; 
-        
-        const {
-            idcliente,
-            nombreCliente,
-            fecha,
-            metodoPago,
-            idPlan,
-            nombrePlan,
-            precioPlan,
-            idproducto,
-            nombreProducto,
-            precioProducto,
-            CantidadProducto,
-            subtotal,
-            descuento,
-            totalPagar
-        } = req.body;
+        const facturaId = req.params.idfacturacion;
 
-       
+        const { metodoPago } = req.body;  
+
         let factura = await Facturaciones.findById(facturaId);
 
         if (!factura) {
             return res.status(404).json({ message: 'Factura no encontrada' });
         }
 
-       
-        factura.idcliente = idcliente;
-        factura.nombreCliente = nombreCliente;
-        factura.fecha = fecha;
+     
         factura.metodoPago = metodoPago;
-        factura.idPlan = idPlan;
-        factura.nombrePlan = nombrePlan;
-        factura.precioPlan = precioPlan;
-        factura.idproducto = idproducto;
-        factura.nombreProducto = nombreProducto;
-        factura.precioProducto = precioProducto;
-        factura.CantidadProducto = CantidadProducto;
-        factura.subtotal = subtotal;
-        factura.descuento = descuento;
-        factura.totalPagar = totalPagar;
 
-        
+       
         const facturaActualizada = await factura.save();
 
-      
         res.json(facturaActualizada);
     } catch (error) {
-      
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+// exports.editarFacturacion = async (req, res) => {
+//     try {
+//         const facturaId = req.params.idfacturacion; 
+        
+//         const {
+//             idcliente,
+//             nombreCliente,
+//             fecha,
+//             metodoPago,
+//             idPlan,
+//             nombrePlan,
+//             precioPlan,
+//             idproducto,
+//             nombreProducto,
+//             precioProducto,
+//             CantidadProducto,
+//             subtotal,
+//             descuento,
+//             totalPagar
+//         } = req.body;
+
+       
+//         let factura = await Facturaciones.findById(facturaId);
+
+//         if (!factura) {
+//             return res.status(404).json({ message: 'Factura no encontrada' });
+//         }
+
+       
+//         factura.idcliente = idcliente;
+//         factura.nombreCliente = nombreCliente;
+//         factura.fecha = fecha;
+//         factura.metodoPago = metodoPago;
+//         factura.idPlan = idPlan;
+//         factura.nombrePlan = nombrePlan;
+//         factura.precioPlan = precioPlan;
+//         factura.idproducto = idproducto;
+//         factura.nombreProducto = nombreProducto;
+//         factura.precioProducto = precioProducto;
+//         factura.CantidadProducto = CantidadProducto;
+//         factura.subtotal = subtotal;
+//         factura.descuento = descuento;
+//         factura.totalPagar = totalPagar;
+
+        
+//         const facturaActualizada = await factura.save();
+
+      
+//         res.json(facturaActualizada);
+//     } catch (error) {
+      
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 
 
@@ -245,7 +275,7 @@ const enviarCorreoFactura = async (emailDestino, factura,datosExtras) => {
 
     await transporter.sendMail(mailOptions);
 
-    // Eliminar el archivo PDF después de enviar el correo
+ 
     fs.unlink(pdfPath, () => {});
 
     return true;
@@ -266,7 +296,7 @@ exports.enviarFacturaPorCorreo = async (req, res) => {
     const { emailDestino } = req.body;
     if (!emailDestino) return res.status(400).json({ message: "Debes proporcionar un correo de destino" });
 
-    // Buscar nombre del plan y producto
+
     const plan = await Planes.findById(factura.idPlan);
     console.log("Plan encontrado:", plan);
     const producto = await Productos.findById(factura.idproducto);
@@ -276,10 +306,10 @@ console.log("Producto encontrado:", producto);
       nombreProducto: producto?.nombreProducto  || 'Sin producto'
     };
 
-    // Responder inmediatamente
+
     res.json({ message: "Factura en proceso de envío" });
 
-    // Enviar en segundo plano
+
     setImmediate(async () => {
       const enviado = await enviarCorreoFactura(emailDestino, factura, datosExtras);
       if (!enviado) console.error("Fallo el envío de la factura");

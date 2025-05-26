@@ -26,11 +26,7 @@ const ProductosSchema = mongoose.Schema(
         cantidadEnStock: {
             type: Number,
             required: true,
-        }, estado: {
-         type: String,
-         enum: ['Activo', 'Inactivo'],
-         default: 'Activo',  // Por defecto, los productos estarán activos.
-     },
+        },
     },
     {
         timestamps: true,

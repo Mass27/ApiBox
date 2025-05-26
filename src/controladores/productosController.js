@@ -101,7 +101,17 @@ exports.guardarProducto = async (req, res) => {
 exports.editarProducto = async (req, res) => {
     try {
         const productoId = req.params.idproducto;
-        const producto = await Productos.findOneAndUpdate({_id: productoId}, req.body, { new: true });
+        const { cantidadEnStock } = req.body;
+
+      
+        const estado = cantidadEnStock === 0 ? 'Inactivo' : 'Activo';
+
+        const producto = await Productos.findOneAndUpdate(
+            { _id: productoId },
+            { ...req.body, estado },
+            { new: true }
+        );
+
         res.json(producto);
     } catch (error) {
         res.status(400).json({ message: error.message });
