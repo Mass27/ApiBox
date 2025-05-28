@@ -33,4 +33,5 @@ rutas.put("/editar/:idrutina",
     rutinasController.editarRutina); 
 rutas.delete("/eliminar/:idrutina", rutinasController.eliminarRutina); 
 rutas.get('/buscar/:nombre', rutinasController.buscarRutinaPorNombre);
+rutas.get('/pdf/:idrutina', rutinasController.generarPDF);
 module.exports = rutas;

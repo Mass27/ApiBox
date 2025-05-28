@@ -3,7 +3,9 @@ const MSJ = require('../componentes/mensaje');
 const multer = require('multer');
 const { unlinkSync } = require('fs');
 const cloudinary = require('cloudinary').v2; 
-
+const puppeteer = require('puppeteer');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
 exports.Inicio = (req, res) => {
     const moduloRutinas = {
@@ -113,6 +115,73 @@ exports.buscarRutinaPorNombre = async (req, res) => {
 
         res.json(rutina);
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+exports.generarPDF = async (req, res) => {
+    const rutinaId = req.params.idrutina;
+
+    try {
+   
+        const rutina = await Rutinas.findById(rutinaId).populate('empleado');
+
+        if (!rutina) {
+            return res.status(404).json({ message: 'Rutina no encontrada' });
+        }
+
+      
+        const doc = new PDFDocument({
+            size: 'A4', 
+            margin: 50 
+        });
+
+       
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="rutina.pdf"');
+
+   
+        doc.pipe(res);
+
+    
+        doc.fontSize(22).fillColor('red').text('Rutina: ' + rutina.nombre, { align: 'center' });
+        doc.moveDown(1);
+
+   
+        doc.fontSize(14).fillColor('black').text(`Descripción: ${rutina.descripcion}`, { align: 'left' });
+        doc.text(`Fecha de Inicio: ${rutina.fechaInicio}`);
+        doc.text(`Fecha de Fin: ${rutina.fechaFin}`);
+        doc.text(`Empleado asignado: ${rutina.empleado.nombreCompleto}`);
+        doc.moveDown(2);
+
+   
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('red').lineWidth(2).stroke();
+
+   
+        doc.fontSize(16).fillColor('red').text('Ejercicios:', { underline: true });
+        doc.moveDown(1);
+
+     
+        rutina.ejercicios.forEach((ejercicio, index) => {
+            doc.fontSize(14).fillColor('black').text(`${index + 1}. ${ejercicio.nombre}`, { continued: true });
+            doc.text(`  - Repeticiones: ${ejercicio.repeticiones}`);
+            doc.text(`  - Series: ${ejercicio.series}`);
+            doc.text(`  - Descanso: ${ejercicio.descanso}`);
+            doc.moveDown(0.5);
+        });
+
+   
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('red').lineWidth(1).stroke();
+
+     
+        doc.fontSize(10).fillColor('gray').text('Generado por el sistema', 50, 780, { align: 'center' });
+
+       
+        doc.end();
+
+    } catch (error) {
+        console.error('Error al generar el PDF:', error);
         res.status(500).json({ message: error.message });
     }
 };
