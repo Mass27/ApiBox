@@ -27,6 +27,8 @@ rutas.get("/listar", clientesController.listarClientes);
 rutas.get("/listarPage", clientesController.listarClientesPage);
 rutas.get("/listar/clientesAct", clientesController.listarClientesActivos);
 rutas.get("/contar/clientesAct", clientesController.contarClientesActivos);
+rutas.get("/contar/clientesIna", clientesController.contarClientesInactivos);
+rutas.get("/contar/clientesPen", clientesController.contarClientesPendientes);
 rutas.get("/listar/clientesIna", clientesController.listarClientesInactivos);
 rutas.get("/listar/clientesPen", clientesController.listarClientesPendientes);
 rutas.get("/buscar/:nombreCliente", clientesController.listarClientesPorNombre);

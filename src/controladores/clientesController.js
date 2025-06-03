@@ -109,6 +109,32 @@ exports.contarClientesActivos = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.contarClientesInactivos = async (req, res) => {
+    try {
+       
+        const cantidadClientesInactivos = await Clientes.countDocuments({ estado: 'Inactivo' });
+
+     
+        res.json({ cantidadClientesInactivos });
+    } catch (error) {
+       
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.contarClientesPendientes = async (req, res) => {
+    try {
+       
+        const cantidadClientesPen = await Clientes.countDocuments({ estado: 'Pendiente' });
+
+     
+        res.json({ cantidadClientesPen });
+    } catch (error) {
+       
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.listarClientesPendientes = async (req, res) => {
     try {
      
@@ -323,29 +349,28 @@ exports.UploadImage = async (req, res) => {
     }
 };
 
-// Controlador para eliminar un cliente por su ID
+
 exports.eliminarCliente = async (req, res) => {
-    const { idcliente } = req.params; // Obtener el ID del cliente de los parámetros de la URL
+    const { idcliente } = req.params; 
 
     try {
-        // Buscar el cliente por su ID
+      
         let cliente = await Clientes.findById(idcliente);
 
-        // Verificar si el cliente existe
+    
         if (!cliente) {
             return res.status(404).json({ message: 'Cliente no encontrado' });
         }
 
-        // Cambiar el estado del cliente a "Inactivo"
+      
         cliente.estado = 'Inactivo';
 
-        // Guardar los cambios en el cliente
         const clienteActualizado = await cliente.save();
 
-        // Retornar el cliente actualizado como respuesta
+     
         res.json(clienteActualizado);
     } catch (error) {
-        // Si ocurre un error, manejarlo
+    
         res.status(500).json({ message: error.message });
     }
 };
@@ -357,21 +382,21 @@ exports.asignarRutinaACliente = async (req, res) => {
     }
 
     try {
-        // Verificar que el cliente existe
+    
         const cliente = await Clientes.findById(clienteId);
         if (!cliente) {
             return res.status(404).json({ message: 'Cliente no encontrado' });
         }
 
-        // Verificar que la rutina existe
+
         const rutina = await Rutinas.findById(rutinaId);
         if (!rutina) {
             return res.status(404).json({ message: 'Rutina no encontrada' });
         }
 
-        // Asignar la rutina al cliente (añadirla al arreglo)
+       
         if (!cliente.rutinasAsignadas.includes(rutinaId)) {
-            cliente.rutinasAsignadas.push(rutinaId);  // Añadir rutina al arreglo
+            cliente.rutinasAsignadas.push(rutinaId); 
             await cliente.save();
         }
 

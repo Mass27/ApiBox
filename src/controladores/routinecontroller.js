@@ -119,65 +119,114 @@ exports.buscarRutinaPorNombre = async (req, res) => {
     }
 };
 
-
 exports.generarPDF = async (req, res) => {
     const rutinaId = req.params.idrutina;
 
     try {
-   
         const rutina = await Rutinas.findById(rutinaId).populate('empleado');
 
         if (!rutina) {
             return res.status(404).json({ message: 'Rutina no encontrada' });
         }
 
-      
-        const doc = new PDFDocument({
-            size: 'A4', 
-            margin: 50 
-        });
+        const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
-       
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename="rutina.pdf"');
-
-   
         doc.pipe(res);
 
-    
-        doc.fontSize(22).fillColor('red').text('Rutina: ' + rutina.nombre, { align: 'center' });
-        doc.moveDown(1);
+        // Encabezado
+        doc
+            .fillColor('red')
+            .fontSize(26)
+            .font('Helvetica-Bold')
+            .text('PLAN DE RUTINA', { align: 'center' })
+            .moveDown(1.5);
 
-   
-        doc.fontSize(14).fillColor('black').text(`Descripción: ${rutina.descripcion}`, { align: 'left' });
-        doc.text(`Fecha de Inicio: ${rutina.fechaInicio}`);
-        doc.text(`Fecha de Fin: ${rutina.fechaFin}`);
-        doc.text(`Empleado asignado: ${rutina.empleado.nombreCompleto}`);
-        doc.moveDown(2);
+        // Datos de la rutina
+        doc
+            .fillColor('black')
+            .fontSize(16)
+            .font('Helvetica-Bold')
+            .text(`Nombre de la Rutina: `, { continued: true })
+            .font('Helvetica')
+            .text(`${rutina.nombre}`)
+            .moveDown(0.5);
 
-   
-        doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('red').lineWidth(2).stroke();
+        doc
+            .font('Helvetica-Bold')
+            .text(`Descripción: `, { continued: true })
+            .font('Helvetica')
+            .text(`${rutina.descripcion}`)
+            .moveDown(0.5);
 
-   
-        doc.fontSize(16).fillColor('red').text('Ejercicios:', { underline: true });
-        doc.moveDown(1);
+        doc
+            .font('Helvetica-Bold')
+            .text(`Fecha de Inicio: `, { continued: true })
+            .font('Helvetica')
+            .text(`${rutina.fechaInicio}`)
+            .moveDown(0.5);
 
-     
+        doc
+            .font('Helvetica-Bold')
+            .text(`Fecha de Fin: `, { continued: true })
+            .font('Helvetica')
+            .text(`${rutina.fechaFin}`)
+            .moveDown(0.5);
+
+        doc
+            .font('Helvetica-Bold')
+            .text(`Empleado Asignado: `, { continued: true })
+            .font('Helvetica')
+            .text(`${rutina.empleado.nombreCompleto}`)
+            .moveDown(1.5);
+
+        // Línea separadora
+        doc
+            .moveTo(50, doc.y)
+            .lineTo(550, doc.y)
+            .strokeColor('#E53E3E')
+            .lineWidth(2)
+            .stroke()
+            .moveDown(1.5);
+
+        // Sección de Ejercicios
+        doc
+            .fillColor('red')
+            .fontSize(18)
+            .font('Helvetica-Bold')
+            .text('Lista de Ejercicios')
+            .moveDown(1);
+
         rutina.ejercicios.forEach((ejercicio, index) => {
-            doc.fontSize(14).fillColor('black').text(`${index + 1}. ${ejercicio.nombre}`, { continued: true });
-            doc.text(`  - Repeticiones: ${ejercicio.repeticiones}`);
-            doc.text(`  - Series: ${ejercicio.series}`);
-            doc.text(`  - Descanso: ${ejercicio.descanso}`);
-            doc.moveDown(0.5);
+            doc
+                .fillColor('black')
+                .fontSize(14)
+                .font('Helvetica-Bold')
+                .text(`${index + 1}. ${ejercicio.nombre}`)
+                .font('Helvetica')
+                .fontSize(12)
+                .text(`- Repeticiones: ${ejercicio.repeticiones}`)
+                .text(`- Series: ${ejercicio.series}`)
+                .text(`- Descanso: ${ejercicio.descanso}`)
+                .moveDown(1);
         });
 
-   
-        doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('red').lineWidth(1).stroke();
+        // Línea final
+        doc
+            .moveTo(50, doc.y)
+            .lineTo(550, doc.y)
+            .strokeColor('#E53E3E')
+            .lineWidth(1)
+            .stroke()
+            .moveDown(2);
 
-     
-        doc.fontSize(10).fillColor('gray').text('Generado por el sistema', 50, 780, { align: 'center' });
+        // Pie de página
+        doc
+            .fontSize(10)
+            .fillColor('gray')
+            .text('Documento generado automáticamente por el sistema Boxing Club', 50, 780, { align: 'center' });
 
-       
         doc.end();
 
     } catch (error) {
