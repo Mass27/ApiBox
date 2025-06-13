@@ -118,7 +118,8 @@ exports.editarProducto = async (req, res) => {
     const { cantidadEnStock } = req.body;
 
 
-    const estado = cantidadEnStock === 0 ? 'Inactivo' : 'Activo';
+    const estado = cantidadEnStock === 0 ? 'Agotado' : 'En existencia';
+
 
     const productoActualizado = await Productos.findOneAndUpdate(
       { _id: productoId },
@@ -157,10 +158,10 @@ exports.obtenerMetrics = async (req, res) => {
     const totalProductos = await Productos.countDocuments();
 
 
-    const activosCount = await Productos.countDocuments({ estado: 'Activo' });
+  const activosCount = await Productos.countDocuments({ estado: 'En existencia' });
 
   
-    const sinStockCount = await Productos.countDocuments({ cantidadEnStock: 0 });
+const sinStockCount = await Productos.countDocuments({ estado: 'Agotado' });
 
 
     const ventasHoy = 0;

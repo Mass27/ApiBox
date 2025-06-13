@@ -22,11 +22,11 @@ const ProductosSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    estado: {
-      type: String,
-      enum: ['Activo', 'Inactivo'],
-      default: 'Activo'
-    },
+   estado: {
+  type: String,
+  enum: ['En existencia', 'Agotado'],
+  default: 'En existencia'
+}
   },
   {
     timestamps: true,
